@@ -1,4 +1,5 @@
 import * as userModel from '../models/user.model.js';
+import { hashPassword } from '../utils/passwordHasher.js';
 
 export const createUser = async (userData) => {
     const { name, lastname, email, password, role } = userData;
@@ -24,8 +25,17 @@ export const createUser = async (userData) => {
         throw new Error('Password must be at least 6 characters long, contain a number and an uppercase letter');
     }
 
-    // Create user
-    return await userModel.createUser({ name, lastname, email, password, role });
+    // Hash de la contraseña antes de guardarla
+    const hashedPassword = await hashPassword(password);
+
+    // Create user con contraseña hasheada
+    return await userModel.createUser({ 
+        name, 
+        lastname, 
+        email, 
+        password: hashedPassword, // <-- Aquí guardamos el hash, no el texto plano
+        role 
+    });
 };
 
 export const getAllUsers = async () => {
