@@ -1,0 +1,22 @@
+# variables de entorno
+.env
+
+# dependencias node
+node_modules/
+
+# archivos de build
+dist/
+build/
+out/
+
+# archivos de logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# archivos del sistema
+.DS_Store
+Thumbs.db
