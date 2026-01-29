@@ -24,7 +24,15 @@ export const getAllUsers = async () => {
 
 export const getUserByEmail = async (email) => {
     const result = await pool.query(
-        'SELECT id_user, first_name, last_name, email, role FROM users WHERE email = $1',
+        'SELECT id_user, first_name, last_name, email, role, is_active FROM users WHERE email = $1',
+        [email]
+    );
+    return result.rows[0];
+};
+
+export const getUserByEmailWithPassword = async (email) => {
+    const result = await pool.query(
+        'SELECT id_user, first_name, last_name, email, password, role, is_active FROM users WHERE email = $1',
         [email]
     );
     return result.rows[0];
