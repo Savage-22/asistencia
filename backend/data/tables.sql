@@ -65,7 +65,23 @@ CREATE TABLE student_parents (
         CHECK (relationship_type IN ('PADRE', 'MADRE', 'APODERADO'))
 );
 
--- 6. ASISTENCIA (La tabla más importante)
+-- 6. RELACIÓN DOCENTE-SECCIÓN (Muchos a Muchos)
+CREATE TABLE teacher_sections (
+    id_user CHAR(10) NOT NULL,
+    id_section CHAR(2) NOT NULL,
+    assigned_at DATE DEFAULT CURRENT_DATE,
+    PRIMARY KEY (id_user, id_section),
+    CONSTRAINT fk_ts_user
+        FOREIGN KEY (id_user)
+        REFERENCES users(id_user)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_ts_section
+        FOREIGN KEY (id_section)
+        REFERENCES sections(id_section)
+        ON DELETE CASCADE
+);
+
+-- 7. ASISTENCIA (La tabla más importante)
 CREATE TABLE attendance (
     id_atten CHAR(10) PRIMARY KEY,
     id_student CHAR(10) NOT NULL,

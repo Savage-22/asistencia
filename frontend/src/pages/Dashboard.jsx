@@ -76,12 +76,22 @@ export default function Dashboard() {
                                 Rol: <span className="font-semibold text-green-600">{user.role}</span>
                             </p>
                         </div>
-                        <button
-                            onClick={handleLogout}
-                            className="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
-                        >
-                            Cerrar Sesión
-                        </button>
+                        <div className="flex gap-2">
+                            {user.role === 'ADMIN' && (
+                                <button
+                                    onClick={() => navigate('/admin/enroll')}
+                                    className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+                                >
+                                    Matricular Alumno
+                                </button>
+                            )}
+                            <button
+                                onClick={handleLogout}
+                                className="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                            >
+                                Cerrar Sesión
+                            </button>
+                        </div>
                     </div>
                 </div>
 
