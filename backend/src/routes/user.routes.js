@@ -13,19 +13,19 @@ const router = Router();
  * - authorizeRole('ADMIN'): Además verifica que tenga el rol ADMIN
  */
 
-// GET /api/users - Obtener todos los usuarios (PROTEGIDA - Solo usuarios autenticados)
+// GET /users - Obtener todos los usuarios (PROTEGIDA - Solo usuarios autenticados)
 router.get('/', authenticateToken, userController.getAllUsers);
 
-// GET /api/users/:id - Obtener usuario por ID
+// GET /users/:id - Obtener usuario por ID
 //router.get('/:id', userController.getUserById);
 
-// POST /api/users - Crear nuevo usuario (PROTEGIDA - Solo ADMIN puede crear usuarios)
+// POST /users - Crear nuevo usuario (PROTEGIDA - Solo ADMIN puede crear usuarios)
 router.post('/', authenticateToken, authorizeRole('ADMIN'), userController.createUser);
 
-// PUT /api/users/:id - Actualizar usuario
+// PUT /users/:id - Actualizar usuario
 //router.put('/:id', userController.updateUser);
 
-// DELETE /api/users/:id - Eliminar usuario
+// DELETE /users/:id - Eliminar usuario
 //router.delete('/:id', userController.deleteUser);
 
 export default router;

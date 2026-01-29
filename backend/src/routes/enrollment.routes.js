@@ -10,10 +10,10 @@ const router = Router();
  * Solo ADMIN puede matricular
  */
 
-// GET /api/enrollment/sections - Obtener todas las secciones
+// GET /enrollment/sections - Obtener todas las secciones
 router.get('/sections', authenticateToken, enrollmentController.getSections);
 
-// POST /api/enrollment - Matricular estudiante con apoderado
+// POST /enrollment - Matricular estudiante con apoderado
 router.post('/', authenticateToken, authorizeRole('ADMIN'), enrollmentController.enrollStudent);
 
 export default router;

@@ -78,12 +78,20 @@ export default function Dashboard() {
                         </div>
                         <div className="flex gap-2">
                             {user.role === 'ADMIN' && (
-                                <button
-                                    onClick={() => navigate('/admin/enroll')}
-                                    className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-                                >
-                                    Matricular Alumno
-                                </button>
+                                <>
+                                    <button
+                                        onClick={() => navigate('/admin/teachers')}
+                                        className="px-6 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors"
+                                    >
+                                        Gestionar Docentes
+                                    </button>
+                                    <button
+                                        onClick={() => navigate('/admin/enroll')}
+                                        className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+                                    >
+                                        Matricular Alumno
+                                    </button>
+                                </>
                             )}
                             <button
                                 onClick={handleLogout}

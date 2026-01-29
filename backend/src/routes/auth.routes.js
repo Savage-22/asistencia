@@ -8,7 +8,7 @@ const router = Router();
  * Define los endpoints de autenticación
  */
 
-// POST /api/auth/login - Iniciar sesión
+// POST /auth/login - Iniciar sesión
 router.post('/login', authController.login);
 
 export default router;
