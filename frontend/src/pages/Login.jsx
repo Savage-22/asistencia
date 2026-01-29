@@ -65,9 +65,18 @@ export default function Home() {
                 // Llamar al servicio de login
                 const data = await loginService(formData.email, formData.password);
                 console.log('Login exitoso:', data);
-                //redirigir al usuario o guardar el token, etc.
+                
+                // Guardar token y datos del usuario
                 saveAuthData(data.token, data.user);
-                navigate('/dashboard');
+                
+                // Redirigir según el rol del usuario
+                if (data.user.role === 'ADMIN') {
+                    navigate('/dashboard'); // Admin va al dashboard general
+                } else if (data.user.role === 'TEACHER') {
+                    navigate('/teacher/dashboard'); // Docente va a su dashboard
+                } else {
+                    navigate('/dashboard'); // Por defecto
+                }
             } catch (error) {
                 console.error('Error durante el login:', error);
                 setLoginError(error);
