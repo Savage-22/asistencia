@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import userRoutes from './routes/user.routes.js';
+import studentRoutes from './routes/student.routes.js';
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(cors({
 
 //Routes
 app.use('/users', userRoutes);
+app.use('/students', studentRoutes);
 //app.use('/auth', authRoutes);
 
 export default app;
