@@ -5,6 +5,7 @@ import studentRoutes from './routes/student.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import enrollmentRoutes from './routes/enrollment.routes.js';
 import teacherRoutes from './routes/teacher.routes.js';
+import attendanceRoutes from './routes/attendance.routes.js';
 
 const app = express();
 
@@ -23,5 +24,6 @@ app.use('/users', userRoutes);
 app.use('/students', studentRoutes);
 app.use('/enrollment', enrollmentRoutes);
 app.use('/teachers', teacherRoutes);
+app.use('/attendance', attendanceRoutes);
 
 export default app;

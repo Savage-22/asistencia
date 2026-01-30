@@ -4,6 +4,7 @@ import Login from './pages/Login.jsx';
 import AdminEnrollment from './pages/AdminEnrollment.jsx';
 import AdminTeachers from './pages/AdminTeachers.jsx';
 import TeacherDashboard from './pages/TeacherDashboard.jsx';
+import TakeAttendance from './pages/TakeAttendance.jsx';
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
           <Route path='/' element={<Login />} />
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/teacher/dashboard' element={<TeacherDashboard />} />
+          <Route path='/teacher/attendance' element={<TakeAttendance />} />
           <Route path='/admin/enroll' element={<AdminEnrollment />} />
           <Route path='/admin/teachers' element={<AdminTeachers />} />
       </Routes>

@@ -101,12 +101,20 @@ export default function TeacherDashboard() {
                                 Total de estudiantes: <span className="font-semibold text-green-600">{students.length}</span>
                             </p>
                         </div>
-                        <button
-                            onClick={handleLogout}
-                            className="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
-                        >
-                            Cerrar Sesión
-                        </button>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => navigate('/teacher/attendance')}
+                                className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors font-semibold"
+                            >
+                                📋 Tomar Asistencia
+                            </button>
+                            <button
+                                onClick={handleLogout}
+                                className="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                            >
+                                Cerrar Sesión
+                            </button>
+                        </div>
                     </div>
                 </div>
 
