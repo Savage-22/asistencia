@@ -17,3 +17,12 @@ export async function getTodayAttendanceList(teacherId = null) {
         throw error.message;
     }
 }
+
+export async function addIncidentComment(attendanceId, comment) {
+    try {
+        const result = await attendanceModel.addIncident(attendanceId, comment);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}

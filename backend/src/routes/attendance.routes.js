@@ -20,4 +20,12 @@ router.get(
     attendanceController.getTodayAttendance
 );
 
+// Agregar incidencia
+router.post(
+    '/incident',
+    authenticateToken,
+    authorizeRole('TEACHER', 'ADMIN'),
+    attendanceController.addIncident
+);
+
 export default router;

@@ -99,7 +99,7 @@ export default function AdminEnrollment() {
 
     const handleLogout = () => {
         logout();
-        navigate('/login');
+        navigate('/');
     };
 
     if (!user) {

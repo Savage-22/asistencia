@@ -101,20 +101,12 @@ export default function TeacherDashboard() {
                                 Total de estudiantes: <span className="font-semibold text-green-600">{students.length}</span>
                             </p>
                         </div>
-                        <div className="flex gap-2">
-                            <button
-                                onClick={() => navigate('/teacher/attendance')}
-                                className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors font-semibold"
-                            >
-                                📋 Tomar Asistencia
-                            </button>
-                            <button
-                                onClick={handleLogout}
-                                className="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
-                            >
-                                Cerrar Sesión
-                            </button>
-                        </div>
+                        <button
+                            onClick={handleLogout}
+                            className="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                        >
+                            Cerrar Sesión
+                        </button>
                     </div>
                 </div>
 
@@ -201,15 +193,26 @@ export default function TeacherDashboard() {
                                 <p className="text-gray-600 mb-4">
                                     {studentsBySections[sectionName].length} estudiante{studentsBySections[sectionName].length !== 1 ? 's' : ''}
                                 </p>
-                                <button
-                                    onClick={() => setSelectedSection({
-                                        name: sectionName,
-                                        students: studentsBySections[sectionName]
-                                    })}
-                                    className="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-                                >
-                                    Ver Sección
-                                </button>
+                                <div className="space-y-2">
+                                    <button
+                                        onClick={() => {
+                                            const sectionId = studentsBySections[sectionName][0]?.id_section;
+                                            navigate(`/teacher/attendance/${sectionId}`);
+                                        }}
+                                        className="w-full px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors font-semibold"
+                                    >
+                                        📋 Tomar Asistencia
+                                    </button>
+                                    <button
+                                        onClick={() => setSelectedSection({
+                                            name: sectionName,
+                                            students: studentsBySections[sectionName]
+                                        })}
+                                        className="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+                                    >
+                                        👁️ Ver Estudiantes
+                                    </button>
+                                </div>
                             </div>
                         ))}
                     </div>

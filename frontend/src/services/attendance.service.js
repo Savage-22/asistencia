@@ -29,3 +29,21 @@ export async function getTodayAttendance() {
         throw error.response?.data?.message || 'Error al obtener asistencias';
     }
 }
+
+/**
+ * Agregar incidencia a una asistencia
+ * @param {number} attendanceId - ID de la asistencia
+ * @param {string} comment - Comentario de la incidencia
+ * @returns {Promise<Object>} - Resultado
+ */
+export async function addIncident(attendanceId, comment) {
+    try {
+        const response = await apiClient.post('/attendance/incident', {
+            attendanceId,
+            comment
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.message || 'Error al agregar incidencia';
+    }
+}

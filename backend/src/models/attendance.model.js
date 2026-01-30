@@ -15,7 +15,7 @@ export async function recordAttendance(qrToken, teacherId) {
         // 1. Buscar estudiante por QR token
         const studentQuery = `
             SELECT s.id_student, s.first_name, s.last_name, s.is_active, 
-                    sec.grade, sec.section_name
+                   s.id_section, sec.grade, sec.section_name
             FROM students s
             LEFT JOIN sections sec ON s.id_section = sec.id_section
             WHERE s.qr_token = $1
@@ -70,6 +70,7 @@ export async function recordAttendance(qrToken, teacherId) {
             attendance: insertResult.rows[0],
             student: {
                 id: student.id_student,
+                id_section: student.id_section,
                 firstName: student.first_name,
                 lastName: student.last_name,
                 grade: student.grade,
@@ -123,4 +124,27 @@ export async function getTodayAttendance(teacherId = null) {
     
     const result = await pool.query(query, params);
     return result.rows;
+}
+
+/**
+ * Agregar o actualizar incidencia a una asistencia
+ * @param {number} attendanceId - ID de la asistencia
+ * @param {string} comment - Comentario de la incidencia
+ * @returns {Promise<Object>} - Asistencia actualizada
+ */
+export async function addIncident(attendanceId, comment) {
+    const query = `
+        UPDATE attendance 
+        SET incident_comment = $1
+        WHERE id_atten = $2
+        RETURNING *
+    `;
+    
+    const result = await pool.query(query, [comment, attendanceId]);
+    
+    if (result.rows.length === 0) {
+        throw new Error('ASISTENCIA_NO_ENCONTRADA');
+    }
+    
+    return result.rows[0];
 }

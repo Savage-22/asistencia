@@ -81,3 +81,41 @@ export async function getTodayAttendance(req, res) {
         });
     }
 }
+
+/**
+ * Agregar incidencia a una asistencia
+ */
+export async function addIncident(req, res) {
+    try {
+        const { attendanceId, comment } = req.body;
+
+        if (!attendanceId || !comment) {
+            return res.status(400).json({
+                success: false,
+                message: 'ID de asistencia y comentario son requeridos'
+            });
+        }
+
+        const result = await attendanceService.addIncidentComment(attendanceId, comment);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Incidencia registrada exitosamente',
+            data: result
+        });
+
+    } catch (error) {
+        if (error.message === 'ASISTENCIA_NO_ENCONTRADA') {
+            return res.status(404).json({
+                success: false,
+                message: 'Asistencia no encontrada'
+            });
+        }
+
+        console.error('Error al agregar incidencia:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error al agregar incidencia'
+        });
+    }
+}

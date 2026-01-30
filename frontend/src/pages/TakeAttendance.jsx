@@ -1,16 +1,20 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { Scanner } from '@yudiel/react-qr-scanner';
 import { getUser, logout } from '../services/auth.service.js';
-import { scanAttendance, getTodayAttendance } from '../services/attendance.service.js';
+import { scanAttendance, getTodayAttendance, addIncident } from '../services/attendance.service.js';
 
 export default function TakeAttendance() {
     const navigate = useNavigate();
+    const { sectionId } = useParams();
     const [user, setUser] = useState(null);
     const [scanning, setScanning] = useState(true);
-    const [feedback, setFeedback] = useState(null); // { type: 'success' | 'error', message: '', student: {} }
+    const [feedback, setFeedback] = useState(null);
     const [todayAttendances, setTodayAttendances] = useState([]);
     const [showHistory, setShowHistory] = useState(false);
+    const [showIncidentModal, setShowIncidentModal] = useState(false);
+    const [currentAttendance, setCurrentAttendance] = useState(null);
+    const [incidentComment, setIncidentComment] = useState('');
 
     useEffect(() => {
         const userData = getUser();
@@ -18,11 +22,13 @@ export default function TakeAttendance() {
             navigate('/login');
         } else if (userData.role !== 'TEACHER') {
             navigate('/dashboard');
+        } else if (!sectionId) {
+            navigate('/teacher/dashboard');
         } else {
             setUser(userData);
             loadTodayAttendances();
         }
-    }, [navigate]);
+    }, [navigate, sectionId]);
 
     const loadTodayAttendances = async () => {
         try {
@@ -37,29 +43,29 @@ export default function TakeAttendance() {
         if (!scanning || !result || result.length === 0) return;
 
         const qrData = result[0].rawValue;
-        setScanning(false); // Pausar escaneo
+        setScanning(false);
 
         try {
             const response = await scanAttendance(qrData);
             
             // Éxito - mostrar en verde
+            setCurrentAttendance(response.data);
+            
             setFeedback({
                 type: 'success',
                 message: '¡Asistencia registrada!',
                 student: response.data.student
             });
 
-            // Recargar lista de asistencias
             loadTodayAttendances();
 
-            // Limpiar feedback después de 3 segundos y reanudar escaneo
+            // Limpiar solo el feedback, pero mantener currentAttendance para incidencias
             setTimeout(() => {
                 setFeedback(null);
                 setScanning(true);
-            }, 3000);
+            }, 4000);
 
         } catch (error) {
-            // Error - mostrar en rojo
             let errorMessage = 'Error al registrar';
             
             if (error === 'QR_NO_ENCONTRADO') {
@@ -76,7 +82,6 @@ export default function TakeAttendance() {
                 student: null
             });
 
-            // Limpiar error después de 2 segundos y reanudar escaneo
             setTimeout(() => {
                 setFeedback(null);
                 setScanning(true);
@@ -95,6 +100,37 @@ export default function TakeAttendance() {
 
     const handleBack = () => {
         navigate('/teacher/dashboard');
+    };
+
+    const handleAddIncident = () => {
+        if (currentAttendance) {
+            setScanning(false); // Pausar el escaneo mientras se reporta
+            setShowIncidentModal(true);
+        }
+    };
+
+    const handleSaveIncident = async () => {
+        if (!incidentComment.trim()) {
+            alert('Escribe un comentario para la incidencia');
+            return;
+        }
+
+        if (!currentAttendance || !currentAttendance.attendance) {
+            alert('Error: No hay asistencia activa para agregar incidencia');
+            setShowIncidentModal(false);
+            return;
+        }
+
+        try {
+            await addIncident(currentAttendance.attendance.id_atten, incidentComment);
+            setShowIncidentModal(false);
+            setIncidentComment('');
+            setCurrentAttendance(null);
+            setScanning(true);
+            alert('✓ Incidencia registrada correctamente');
+        } catch (error) {
+            alert('Error al guardar incidencia: ' + error);
+        }
     };
 
     if (!user) {
@@ -201,6 +237,14 @@ export default function TakeAttendance() {
                                         <p className="text-lg mt-2">
                                             {feedback.student.grade} - {feedback.student.section}
                                         </p>
+                                        {currentAttendance && (
+                                            <button
+                                                onClick={handleAddIncident}
+                                                className="mt-4 px-6 py-2 bg-yellow-400 text-gray-900 rounded-md hover:bg-yellow-300 transition-colors font-semibold"
+                                            >
+                                                ⚠️ Reportar Incidencia
+                                            </button>
+                                        )}
                                     </>
                                 ) : (
                                     <>
@@ -266,6 +310,57 @@ export default function TakeAttendance() {
                     </div>
                 )}
             </div>
+
+            {/* Modal de Incidencias */}
+            {showIncidentModal && (
+                <div
+                    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+                    onClick={() => setShowIncidentModal(false)}
+                >
+                    <div
+                        className="bg-white rounded-lg p-6 max-w-md w-full"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h3 className="text-xl font-bold text-gray-900 mb-4">
+                            ⚠️ Reportar Incidencia
+                        </h3>
+                        <p className="text-sm text-gray-600 mb-4">
+                            Estudiante: <span className="font-semibold">{currentAttendance?.student.firstName} {currentAttendance?.student.lastName}</span>
+                        </p>
+                        
+                        <label className="block mb-2 text-sm font-medium text-gray-700">
+                            Descripción de la incidencia:
+                        </label>
+                        <textarea
+                            value={incidentComment}
+                            onChange={(e) => setIncidentComment(e.target.value)}
+                            placeholder="Ej: Llegó sin uniforme, sin tarea, comportamiento inadecuado..."
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 min-h-24"
+                            autoFocus
+                        />
+                        
+                        <div className="flex gap-2 mt-4">
+                            <button
+                                onClick={handleSaveIncident}
+                                className="flex-1 px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors font-semibold"
+                            >
+                                Guardar
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setShowIncidentModal(false);
+                                    setIncidentComment('');
+                                    setCurrentAttendance(null); // Limpiar al cancelar
+                                    setScanning(true); // Reanudar escaneo
+                                }}
+                                className="flex-1 px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
+                            >
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
